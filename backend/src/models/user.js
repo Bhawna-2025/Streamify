@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "",
     },
+    learningLanguage: {
+        type: String,
+        default: "",
+    },
     location: {
         type: String,
         default: "",
@@ -57,7 +61,10 @@ userSchema.pre("save",async function(next){
         next(err);
     }
 })
-
+userSchema.methods.matchPassword = async function (enteredPassword){
+    const isPasswordCorrect = await bcrypt.compare(enteredPassword,this.password)
+    return isPasswordCorrect;
+}
 const User = mongoose.model("User",userSchema)
 
 export default User;
