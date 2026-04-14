@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser"
 
 import authRoutes from "../src/routes/auth.route.js"
 import userRoutes from "../src/routes/user.route.js"
+import chatRouter from "./routes/chat.routes.js";
 
 import { connectDB } from "./lib/db.js";
 
@@ -16,7 +17,7 @@ app.use(cookieParser());
 
 app.use("/api/auth",authRoutes)
 app.use("/api/user",userRoutes)
-app.use("/api/chat",chatRoutes)
+app.use("/api/chat",chatRouter)
 
 app.listen(PORT,()=>{
     console.log(`server is running on port ${PORT}`)
