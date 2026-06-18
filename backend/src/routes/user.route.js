@@ -14,13 +14,13 @@ const userRouter = express.Router()
 userRouter.use(protectRoute)
 
 userRouter.get("/",getRecomendedUser)
-userRouter.get("/getFriend",getMyFriends)
+userRouter.get("/friends",getMyFriends)
 
 userRouter.post("/friend-request/:id",sendFriendRequest);
-userRouter.put("/friend-request-accept/:id/accept",acceptFriendRequet);
+userRouter.put("/friend-request/:id/accept",acceptFriendRequet);
 //TODO:we can add reject route as well here
 
-userRouter.get("/friend-request",getFriendRequest);
-userRouter.get("/outGoing-friend-request",outGoingRequest);//when user have sent the request then it must show that the friend request have sent like there should not a button which show" sent friend request"
+userRouter.get("/friend-requests",getFriendRequest);
+userRouter.get("/outgoing-friend-requests",outGoingRequest);//when user have sent the request then it must show that the friend request have sent like there should not a button which show" sent friend request"
 
 export  default userRouter

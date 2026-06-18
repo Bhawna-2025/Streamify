@@ -4,6 +4,6 @@ import { getStreamToken } from "../contollers/chat.controller.js"
 
 const chatRouter =express.Router()
 
-chatRouter.get("/chat",protectRoute,getStreamToken)
+chatRouter.get("/token",protectRoute,getStreamToken)
 
 export default chatRouter

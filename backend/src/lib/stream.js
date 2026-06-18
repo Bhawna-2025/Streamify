@@ -5,7 +5,7 @@ const apiKey = process.env.STEAM_API_KEY
 const apiSecret = process.env.STEAM_API_SECRET
 
 if (!apiKey || !apiSecret) {
-    console.errpr("Stream API key or Secret is missing")
+    console.error("Stream API key or Secret is missing")
 }
 
 const streamClient = StreamChat.getInstance(apiKey, apiSecret)
@@ -22,15 +22,13 @@ export const upsertStreamUser = async (userData) => {
 }
 
 //generating token for stream then using this function in chat controller 
-export const generateStreamToken = async (userId) => {
+export const generateStreamToken = (userId) => {
     try {
         //ensure userId is a string 
         const userIdStr = userId.toString()
         return streamClient.createToken(userIdStr)
     } catch (error) {
         console.log("Error in generating token in stream  : ", error)
-        return res.status(500).json({
-            message: "Internal server error"
-        })
+        throw error
     }
 }
