@@ -5,19 +5,70 @@ import { getStreamToken } from "../lib/api";
 import { useQuery } from "@tanstack/react-query";
 import ChatLoader from "../components/ChatLoader";
 import toast from "react-hot-toast";
-import CallButton from "../components/CallButton";
 import {
   Channel,
-  ChannelHeader,
   Chat,
   Window,
   MessageList,
   Thread,
-  // MessageComposerUI,
+  MessageComposer,
+  useChannelStateContext,
+  useChannelPreviewInfo,
+  useTypingContext,
 } from "stream-chat-react";
-
+import { VideoIcon } from "lucide-react";
+import CallButton from "../components/CallButton";
 import { StreamChat } from "stream-chat";
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
+
+const CustomChannelHeader = ({ handleVideoCall, authUser }) => {
+  const { channel, channelConfig } = useChannelStateContext();
+  const { displayImage, displayTitle } = useChannelPreviewInfo({ channel });
+  const { typing = {} } = useTypingContext();
+
+  const hasTyping = channelConfig?.typing_events !== false && 
+    Object.values(typing).some(({ parent_id }) => !parent_id);
+
+  const otherMemberId = Object.keys(channel?.state?.members || {}).find(
+    (id) => id !== authUser?._id?.toString()
+  );
+  const otherMember = otherMemberId ? channel?.state?.members[otherMemberId]?.user : null;
+  const isOnline = otherMember?.online;
+
+  return (
+    <div className="str-chat__channel-header w-full z-20">
+      {/* Left-most corner: Profile pic (Avatar) */}
+      <div className="str-chat__channel-header__start flex items-center">
+        <div className="avatar">
+          <div className="w-10 h-10 rounded-full overflow-hidden">
+            <img
+              src={displayImage || "/placeholder.png"}
+              alt={displayTitle || "User Avatar"}
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Center: Title & status */}
+      <div className="str-chat__channel-header__data">
+        <span className="str-chat__channel-header__data__title">
+          {displayTitle}
+        </span>
+        <span className="str-chat__channel-header__data__subtitle">
+          {hasTyping ? "Typing..." : (isOnline ? "Online" : "Offline")}
+        </span>
+      </div>
+
+      {/* Right-most corner: Video call button */}
+      <div className="str-chat__channel-header__end">
+        <button onClick={handleVideoCall} className="btn btn-success btn-sm text-white flex items-center justify-center">
+          <VideoIcon className="size-5" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const ChatPage = () => {
   const { id: targetUserId } = useParams();
@@ -88,19 +139,11 @@ const ChatPage = () => {
     <div className="h-[93vh]">
       <Chat client={chatClient}>
         <Channel channel={channel}>
-          <div className="w-full relative">
-            <CallButton handleVideoCall={handleVedioCall}/>
             <Window>
-              <ChannelHeader />
+              <CustomChannelHeader handleVideoCall={handleVedioCall} authUser={authUser} />
               <MessageList />
-
-
-
-              {/* <MessageComposerUI /> */}
-
-
+              <MessageComposer />
             </Window>
-          </div>
           <Thread/>
         </Channel>
       </Chat>
